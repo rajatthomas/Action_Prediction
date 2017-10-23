@@ -1,113 +1,30 @@
 % Difference in power spectrum
 
+%%
+addpath('/home/rajat/Dropbox/Teresa_Rajat/AP_EEG/fieldtrip-master/')
+ft_defaults
+%--------- Bands of interest -------------------------------------------
+alpha = 8:2:12;
+low_beta = 12:2:20;
+high_beta = 20:2:28;
+low_gamma = [28:2:46 54:2:64];
+high_gamma = [64:2:98 102:2:148 152:2:196];
+
+
+
 %% load the super intact: (no camera changes or time warps)
 
-runID = 'D1'; % 'A2', similarly 'B' or 'C'
-load(['P3_run_' runID '_seg_movie_nofilter_nobaseline.mat']);
+run_type = {'super_intact', 'time_warped', 'intact', };
 
-if runID(1) == 'D'
-    super_intact = [1, 9, 10, 12, 20];
-else
-    super_intact = [8, 11, 5, 16];
+for run_i = 1:2
+   for type_i=1:4 
+    data = get_data(run_i, run_type{type_i});
+    freq_spectrum = get_tf(data, 'power_spectrum');
+   end
 end
-
-Amovies = [23, 4, 31, 10, 20, 36, 25, 8];
-Bmovies = [11, 28, 21, 1, 5, 40, 9, 27];
-Cmovies = [7, 30, 1, 24, 29, 16, 32, 3];
-
-Dmovies = [1, 5, 8, 9, 10, 11, 12, 16, 20]; % some are time warped others super intact
-Emovies = [8, 11, 20, 5, 1, 9, 16, 12, 10];
-%% Get the scrambled movies run1
+    
 
 
-runID = 'A1'; % 'A2', similarly 'B' or 'C'
-load(['P3_run_' runID '_seg_movie_nofilter_nobaseline.mat']);
-scrambled = intersect(Dmovies+20, Amovies);
-cfg = [];
-cfg.trials = ismember(data.trialinfo, scrambled);
-data_A = ft_selectdata(cfg, data);
-
-
-runID = 'B1'; % 'A2', similarly 'B' or 'C'
-load(['P3_run_' runID '_seg_movie_nofilter_nobaseline.mat']);
-scrambled = intersect(Dmovies+20, Bmovies);
-cfg = [];
-cfg.trials = ismember(data.trialinfo, scrambled);
-data_B = ft_selectdata(cfg, data);
-
-runID = 'C1'; % 'A2', similarly 'B' or 'C'
-load(['P3_run_' runID '_seg_movie_nofilter_nobaseline.mat']);
-scrambled = intersect(Dmovies+20, Cmovies);
-cfg = [];
-cfg.trials = ismember(data.trialinfo, scrambled);
-data_C = ft_selectdata(cfg, data);
-
-data_scrambled_run1 = ft_appenddata([],data_A, data_B, data_C);
-
-%% Get the scrambled movies run2
-
-
-runID = 'A2'; % 'A2', similarly 'B' or 'C'
-load(['P3_run_' runID '_seg_movie_nofilter_nobaseline.mat']);
-scrambled = intersect(Dmovies+20, Amovies);
-cfg = [];
-cfg.trials = ismember(data.trialinfo, scrambled);
-data_A = ft_selectdata(cfg, data);
-
-
-runID = 'B2'; % 'A2', similarly 'B' or 'C'
-load(['P3_run_' runID '_seg_movie_nofilter_nobaseline.mat']);
-scrambled = intersect(Dmovies+20, Bmovies);
-cfg = [];
-cfg.trials = ismember(data.trialinfo, scrambled);
-data_B = ft_selectdata(cfg, data);
-
-runID = 'C2'; % 'A2', similarly 'B' or 'C'
-load(['P3_run_' runID '_seg_movie_nofilter_nobaseline.mat']);
-scrambled = intersect(Dmovies+20, Cmovies);
-cfg = [];
-cfg.trials = ismember(data.trialinfo, scrambled);
-data_C = ft_selectdata(cfg, data);
-
-data_scrambled_run2 = ft_appenddata([],data_A, data_B, data_C);
-
-%% Get the super intact movies run1
-
-runID = 'D1'; % 
-load(['P3_run_' runID '_seg_movie_nofilter_nobaseline.mat']);
-super_intact_D = [1, 9, 10, 12, 20];
-cfg = [];
-cfg.trials = ismember(data.trialinfo, super_intact_D);
-data_D = ft_selectdata(cfg, data);
-
-
-runID = 'E1'; % 'A2', similarly 'B' or 'C'
-load(['P3_run_' runID '_seg_movie_nofilter_nobaseline.mat']);
-super_intact_E = [8, 11, 5, 16];
-cfg = [];
-cfg.trials = ismember(data.trialinfo, super_intact_E);
-data_E = ft_selectdata(cfg, data);
-
-data_super_intact_run1 = ft_appenddata([], data_D, data_E);
-
-%% Get the super intact movies run2
-
-runID = 'D2'; % 
-load(['P3_run_' runID '_seg_movie_nofilter_nobaseline.mat']);
-super_intact_D = [1, 9, 10, 12, 20];
-cfg = [];
-cfg.trials = ismember(data.trialinfo, super_intact_D);
-data_D = ft_selectdata(cfg, data);
-
-
-runID = 'E2'; % 'A2', similarly 'B' or 'C'
-load(['P3_run_' runID '_seg_movie_nofilter_nobaseline.mat']);
-super_intact_E = [8, 11, 5, 16];
-cfg = [];
-cfg.trials = ismember(data.trialinfo, super_intact_E);
-data_E = ft_selectdata(cfg, data);
-
-data_super_intact_run2 = ft_appenddata([], data_D, data_E);
 %% Power of super intact run1
 
 super_intact = [1, 5, 8, 9, 10, 11, 12, 16, 20];
@@ -276,6 +193,7 @@ for i=1:100
     pause
     close all
 end
+
 
 
 

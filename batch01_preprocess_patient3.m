@@ -103,7 +103,7 @@ for run_i = 1:n_runs
         cfg.trialdef.post= 0.7;
         trl = trialdefs_camera_changes(cfg);
     else % movie
-        cfg.trialdef.pre = 0.0; % 5 secs before movie starts 
+        cfg.trialdef.pre = 1.0; % 5 secs before movie starts 
         cfg.trialdef.post= 40.0; % 40 secs of movie (shortest movie ~ 40secs)
         trl = trialdefs_movies(cfg);
     end
