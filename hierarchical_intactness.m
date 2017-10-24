@@ -18,8 +18,9 @@ for run_i = 1:2
        
        % freq spectrum by collapsing across all time
        freq_spectrum = get_tf(data, freq_type);
-       
+       clearvars -expect filename freq_spectrum
        save(filename, 'freq_spectrum');
+       
    end
 end
     
@@ -50,7 +51,8 @@ for run_i = 1:2
           [il, ih] = indexfinder(freq_spectrum.freq, band);
           sprintf('Band <%d,%d>', freq_spectrum.freq(il),freq_spectrum.freq(ih))
           avg_band_power(:,:,pow_i) = mean(freq_spectrum.trial(:,:,il:ih),3);
-          [~
+          [~, I] = sort(trialinfo);
+          avg_band_power = avg_band_power(I,:,:); % reorder so all trials are aligned
        end
        
        filename = sprintf('band_powers_%s_run%d.mat',run_type{type_i}, run_i);

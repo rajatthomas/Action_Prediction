@@ -57,8 +57,8 @@ if (strcmp(cfg.runID(1),'B'))
         movie_begin_triggers = [17060, 62776, 179104, 233983, 288986, 375538, 419341, 492133];
     end
     
-    %movieFileName = ['M12';'S08';'S01';'M01';'M05';'S22';'M10';'S07'];
-    movieTags = [11, 28, 21, 1, 5, 40, 9, 27];
+    %movieFileName = ['M12';'S08';'S01';'M13';'M05';'S22';'M10';'S07'];
+    movieTags = [11, 28, 21, 12, 5, 40, 9, 27];
 end
 
 if (strcmp(cfg.runID(1),'C'))
@@ -75,8 +75,8 @@ if (strcmp(cfg.runID(1),'C'))
         movie_begin_triggers = [15440, 103244, 153961, 210841, 282569, 356362, 404015, 459008];
     end
     
-    %movieFileName = ['M07';'S11';'M12';'S04';'S10';'M17';'S13';'M03'];
-    movieTags = [7, 30, 12, 24, 29, 16, 32, 3];
+    %movieFileName = ['M07';'S11';'M01';'S04';'S10';'M17';'S13';'M03'];
+    movieTags = [7, 30, 1, 24, 29, 16, 32, 3];
 end
 
 
