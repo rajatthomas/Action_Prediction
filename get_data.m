@@ -7,7 +7,7 @@ end
 
 Amovies = [23, 4, 31, 10, 20, 36, 25, 8];
 Bmovies = [11, 28, 21, 1, 5, 40, 9, 27];
-Cmovies = [7, 30, 1, 24, 29, 16, 32, 3];
+Cmovies = [7, 30, 12, 24, 29, 16, 32, 3];
 
 Dmovies = [1, 5, 8, 9, 10, 11, 12, 16, 20]; % some are time warped others super intact
 Emovies = [8, 11, 20, 5, 1, 9, 16, 12, 10];

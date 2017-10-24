@@ -1,102 +1,65 @@
 % Difference in power spectrum
 
-%%
-addpath('/home/rajat/Dropbox/Teresa_Rajat/AP_EEG/fieldtrip-master/')
-ft_defaults
-%--------- Bands of interest -------------------------------------------
-alpha = 8:2:12;
-low_beta = 12:2:20;
-high_beta = 20:2:28;
-low_gamma = [28:2:46 54:2:64];
-high_gamma = [64:2:98 102:2:148 152:2:196];
+%
+%addpath('/home/rajat/Dropbox/Teresa_Rajat/AP_EEG/fieldtrip-master/')
+%ft_defaults
 
+run_type = {'super_intact', 'time_warped', 'intact', 'scrambled'};
+freq_type = 'power_spectrum';
+%% Create a time-freq plot and collapse across time to get the freq spectrum
 
-
-%% load the super intact: (no camera changes or time warps)
-
-run_type = {'super_intact', 'time_warped', 'intact', };
 
 for run_i = 1:2
    for type_i=1:4 
-    data = get_data(run_i, run_type{type_i});
-    freq_spectrum = get_tf(data, 'power_spectrum');
+       filename = sprintf('%s_%s_run%d.mat',freq_type,run_type{type_i}, run_i);
+       
+       % returns a fieldtrip format data 
+       data = get_data(run_i, run_type{type_i});
+       
+       % freq spectrum by collapsing across all time
+       freq_spectrum = get_tf(data, freq_type);
+       
+       save(filename, 'freq_spectrum');
    end
 end
     
 
 
-%% Power of super intact run1
+%% T-test 
+%--------- Bands of interest -------------------------------------------
+alpha = [8 12];
+low_beta = [12 20];
+high_beta = [20 28];
+low_gamma = [28 64];
+high_gamma = [64 160];
 
-super_intact = [1, 5, 8, 9, 10, 11, 12, 16, 20];
+power_bands = {'alpha', 'low_beta', 'high_beta', 'low_gamma', 'high_gamma'};
+nbands = length(power_bands);
 
-data = data_super_intact_run1;
-
-Fs = 400;            % Sampling frequency 
-[nchannels, ntimes] =size(data.trial{1});
-ntrials = length(data.trial); %-2; % last two are baselines if present
-
-L = 512;
-f = Fs*(0:floor(L/2))/L;
-fcorr = repmat(f',[1 nchannels]);
-
-POW_super_intact_run1 = zeros(floor(L/2)+1, nchannels, ntrials);
-
-for trial_i = 1:ntrials
-    Y = fft(data.trial{trial_i}',L);
-    P2 = abs(Y/L).^2;
-    P1 = P2(1:floor(L/2)+1,:);
-    P1(2:end-1,:) = 2*P1(2:end-1,:);
-    POW_super_intact_run1(:,:,trial_i) = P1;
+for run_i = 1:2
+   for type_i=1:4 
+       filename = sprintf('%s_%s_run%d.mat',freq_type,run_type{type_i}, run_i);
+       
+       load(filename)
+       
+       [ntrials, nchs, ~] = size(freq_spectrum.trial);
+      
+       avg_band_power = zeros(ntrials, nchs, nbands);
+       for pow_i=1:nbands
+          band = eval(power_bands{pow_i});
+          [il, ih] = indexfinder(freq_spectrum.freq, band);
+          sprintf('Band <%d,%d>', freq_spectrum.freq(il),freq_spectrum.freq(ih))
+          avg_band_power(:,:,pow_i) = mean(freq_spectrum.trial(:,:,il:ih),3);
+          [~
+       end
+       
+       filename = sprintf('band_powers_%s_run%d.mat',run_type{type_i}, run_i);
+       trialinfo = freq_spectrum.trialinfo;
+       
+       save(filename, 'avg_band_power', 'trialinfo');
+   end
 end
 
-
-%% Power of super intact run2
-
-super_intact = [1, 5, 8, 9, 10, 11, 12, 16, 20];
-
-data = data_super_intact_run2;
-
-Fs = 400;            % Sampling frequency 
-[nchannels, ntimes] =size(data.trial{1});
-ntrials = length(data.trial); %-2; % last two are baselines if present
-
-L = 512;
-f = Fs*(0:floor(L/2))/L;
-fcorr = repmat(f',[1 nchannels]);
-
-POW_super_intact_run2 = zeros(floor(L/2)+1, nchannels, ntrials);
-
-for trial_i = 1:ntrials
-    Y = fft(data.trial{trial_i}',L);
-    P2 = abs(Y/L).^2;
-    P1 = P2(1:floor(L/2)+1,:);
-    P1(2:end-1,:) = 2*P1(2:end-1,:);
-    POW_super_intact_run2(:,:,trial_i) = P1;
-end
-%% Power of scrambled run1
-
-scrambled = [31,36,25,28,21,40,30,29,32];
-scram2super = [6, 8, 2, 3, 1, 9, 5, 4, 7]; % because super_intact and scrambled movies are not in the same order
-
-data = data_scrambled_run1;
-
-Fs = 400;            % Sampling frequency 
-[nchannels, ntimes] =size(data.trial{1});
-ntrials = length(data.trial); %-2; % last two are baselines if present
-
-L = 512;
-f = Fs*(0:floor(L/2))/L;
-fcorr = repmat(f',[1 nchannels]);
-
-POW_scrambled_run1 = zeros(floor(L/2)+1, nchannels, ntrials);
-
-for trial_i = 1:ntrials
-    Y = fft(data.trial{trial_i}',L);
-    P2 = abs(Y/L).^2;
-    P1 = P2(1:floor(L/2)+1,:);
-    P1(2:end-1,:) = 2*P1(2:end-1,:);
-    POW_scrambled_run1(:,:,trial_i) = P1;
-end
 
 %%
 scrambled = [31,36,25,28,21,40,30,29,32];

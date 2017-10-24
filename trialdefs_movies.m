@@ -75,8 +75,8 @@ if (strcmp(cfg.runID(1),'C'))
         movie_begin_triggers = [15440, 103244, 153961, 210841, 282569, 356362, 404015, 459008];
     end
     
-    %movieFileName = ['M07';'S11';'M01';'S04';'S10';'M17';'S13';'M03'];
-    movieTags = [7, 30, 1, 24, 29, 16, 32, 3];
+    %movieFileName = ['M07';'S11';'M12';'S04';'S10';'M17';'S13';'M03'];
+    movieTags = [7, 30, 12, 24, 29, 16, 32, 3];
 end
 
 

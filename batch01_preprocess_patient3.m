@@ -8,11 +8,11 @@ addpath('/home/rajat/Dropbox/Teresa_Rajat/AP_EEG/fieldtrip-20170618/')
 
 % run
 patientNum = 3;
-%runID{1} = 'A1'; runID{2} = 'B1'; runID{3} = 'C1';
-%runID{4} = 'A2'; runID{5} = 'B2'; runID{6} = 'C2';
+runID{1} = 'A1'; runID{2} = 'B1'; runID{3} = 'C1';
+runID{4} = 'A2'; runID{5} = 'B2'; runID{6} = 'C2';
 
-runID{1} = 'D1'; runID{2} = 'E1';
-runID{3} = 'D2'; runID{4} = 'E2';
+runID{7} = 'D1'; runID{8} = 'E1';
+runID{9} = 'D2'; runID{10} = 'E2';
 
 % segment at which level?
 %seg_type{1} = 'camera';
@@ -103,7 +103,7 @@ for run_i = 1:n_runs
         cfg.trialdef.post= 0.7;
         trl = trialdefs_camera_changes(cfg);
     else % movie
-        cfg.trialdef.pre = 1.0; % 5 secs before movie starts 
+        cfg.trialdef.pre = 2.0; %  secs before movie starts 
         cfg.trialdef.post= 40.0; % 40 secs of movie (shortest movie ~ 40secs)
         trl = trialdefs_movies(cfg);
     end
