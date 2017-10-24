@@ -1,29 +1,29 @@
 % Difference in power spectrum
 
 %
-%addpath('/home/rajat/Dropbox/Teresa_Rajat/AP_EEG/fieldtrip-master/')
-%ft_defaults
+addpath('/home/rajat/JapanECoG/fieldtrip-master/')
+ft_defaults
 
 run_type = {'super_intact', 'time_warped', 'intact', 'scrambled'};
 freq_type = 'power_spectrum';
 %% Create a time-freq plot and collapse across time to get the freq spectrum
 
-
-for run_i = 1:2
-   for type_i=1:4 
-       filename = sprintf('%s_%s_run%d.mat',freq_type,run_type{type_i}, run_i);
+all_freq_spectrum={};
+i=1;
+for type_i = 1:4
+   for run_i=1:2 
+       filename = sprintf('%s_%s_run%d.mat',freq_type,run_type{type_i}, run_i)
        
        % returns a fieldtrip format data 
        data = get_data(run_i, run_type{type_i});
        
        % freq spectrum by collapsing across all time
-       freq_spectrum = get_tf(data, freq_type);
-       clearvars -expect filename freq_spectrum
-       save(filename, 'freq_spectrum');
+       all_freq_spectrum{i} = get_tf(data, freq_type);
+       i=i+1;
        
    end
 end
-    
+    save('power_spectrum_all.mat', 'all_freq_spectrum');
 
 
 %% T-test 
@@ -37,22 +37,35 @@ high_gamma = [64 160];
 power_bands = {'alpha', 'low_beta', 'high_beta', 'low_gamma', 'high_gamma'};
 nbands = length(power_bands);
 
-for run_i = 1:2
-   for type_i=1:4 
-       filename = sprintf('%s_%s_run%d.mat',freq_type,run_type{type_i}, run_i);
-       
-       load(filename)
-       
-       [ntrials, nchs, ~] = size(freq_spectrum.trial);
-      
-       avg_band_power = zeros(ntrials, nchs, nbands);
+load power_spectrum_all
+
+nchs = 77;
+nconds = 4;
+nrpts = 2;
+nbands = 5;
+ntrials = 9;
+nfreqs=79;
+
+band_powers = zeros(ntrials, nchs, nbands, nconds);
+all_trial = zeros(nconds*nrpts,ntrials,nchs,nfreqs);
+
+for i = 1:8
+   
+       s = all_freq_spectrum{i};
+       all_trial(i,:,:,:) = s.trial;
+end
+
+all_trials = reshape(all_trial, [nconds, ntrials*nrpts, nchs, nfreqs]);
+
+%%
+
        for pow_i=1:nbands
           band = eval(power_bands{pow_i});
-          [il, ih] = indexfinder(freq_spectrum.freq, band);
+          [il, ih] = indexfinder(S.freq, band);
           sprintf('Band <%d,%d>', freq_spectrum.freq(il),freq_spectrum.freq(ih))
-          avg_band_power(:,:,pow_i) = mean(freq_spectrum.trial(:,:,il:ih),3);
+          band_powers(:,:,pow_i,i) = mean(S.trial(:,:,il:ih),3);
           [~, I] = sort(trialinfo);
-          avg_band_power = avg_band_power(I,:,:); % reorder so all trials are aligned
+          band_powers = band_powers(I,:,:); % reorder so all trials are aligned
        end
        
        filename = sprintf('band_powers_%s_run%d.mat',run_type{type_i}, run_i);
